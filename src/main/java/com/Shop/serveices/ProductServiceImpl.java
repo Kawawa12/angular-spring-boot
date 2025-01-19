@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ProductServiceImpl implements ProductService{
@@ -49,7 +50,7 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public Response addProduct(ProductDto productDto, MultipartFile imageFile) {
+    public Response addProduct(ProductDto productDto, MultipartFile image) {
 
         Response response = new Response();
         // Check if category exists
@@ -61,14 +62,16 @@ public class ProductServiceImpl implements ProductService{
         }
 
         // Save image and get path
-        String imagePath = saveImage(imageFile);
+        String imageUrl = saveImage(image);
 
-        // Create product object from productDto
         Product product = new Product();
         product.setName(productDto.getName());
-        product.setCategory(category.get());
         product.setPrice(productDto.getPrice());
-        product.setImageUrl(imagePath);
+        product.setCategory(categoryRepo.findById(productDto.getCatId())
+                .orElseThrow(() -> new RuntimeException("Category not found")));
+        product.setImageUrl(imageUrl); // Set the image URL
+        productRepo.save(product);
+
 
         Product savedProd = productRepo.save(product);
 
@@ -113,28 +116,33 @@ public class ProductServiceImpl implements ProductService{
         return response;
     }
 
-    //A method to  return image path
+    //Save image and return absolute path
     private String saveImage(MultipartFile imageFile) {
         if (imageFile == null || imageFile.isEmpty()) {
-            return null; // Or handle as per the requirement
+            return null; // Handle as per the requirement
         }
 
         try {
-            // Define the path where images will be saved
+            // Define the path to save images in the `static/images` directory
             String directory = "src/main/resources/static/images/";
             File folder = new File(directory);
             if (!folder.exists()) {
-                folder.mkdirs(); // Create directories if they don't exist
+                folder.mkdirs(); // Create the directory if it doesn't exist
             }
 
-            // Create the file path with the image's original filename
-            Path path = Path.of(directory, Objects.requireNonNull(imageFile.getOriginalFilename()));
+            // Generate a unique filename to prevent conflicts
+            String uniqueFileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
+            Path path = Path.of(directory, uniqueFileName);
+
+            // Save the image to the directory
             Files.copy(imageFile.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
-            return path.toString(); // Return the image path
+            // Return the URL that points to the image
+            return "/images/" + uniqueFileName;
         } catch (IOException e) {
             e.printStackTrace();
-            return null; // Or handle error as needed
+            return null; // Handle error as needed
         }
     }
+
 }
