@@ -1,5 +1,6 @@
 package com.Shop.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 
 @Entity
@@ -9,16 +10,24 @@ public class Admin extends AppUser{
 
     private String address;
 
+    @Column(nullable = true)
+    private String imageUrl;
+
     public Admin() {
         super();
     }
 
-    public Admin(Long id, String fullName, String email, String password, String phone, Role role,
-                 Long id1, String gender, String address) {
-        super(id, fullName, email, password, phone, role);
-        this.id = id1;
+    public Admin(String gender, String address, String imageUrl) {
         this.gender = gender;
         this.address = address;
+        this.imageUrl = imageUrl;
+    }
+
+    public Admin(Long id, String fullName, String email, String password, String phone, Role role, String gender, String address, String imageUrl) {
+        super(id, fullName, email, password, phone, role);
+        this.gender = gender;
+        this.address = address;
+        this.imageUrl = imageUrl;
     }
 
     public String getGender() {
@@ -37,4 +46,11 @@ public class Admin extends AppUser{
         this.address = address;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }

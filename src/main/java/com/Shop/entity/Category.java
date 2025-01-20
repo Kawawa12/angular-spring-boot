@@ -1,5 +1,6 @@
 package com.Shop.entity;
 
+import com.Shop.response.CategoryDto;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -16,17 +17,12 @@ public class Category {
     @OneToMany(mappedBy = "category")
     private List<Product> products;
 
-    @ManyToOne
-    @JoinColumn(name = "admin_id")
-    private Admin admin;
-
     public Category() {
         super();
     }
 
-    public Category(Long id, Admin admin, List<Product> products, String name) {
+    public Category(Long id, List<Product> products, String name) {
         this.id = id;
-        this.admin = admin;
         this.products = products;
         this.name = name;
     }
@@ -37,14 +33,6 @@ public class Category {
 
     public void setProducts(List<Product> products) {
         this.products = products;
-    }
-
-    public Admin getAdmin() {
-        return admin;
-    }
-
-    public void setAdmin(Admin admin) {
-        this.admin = admin;
     }
 
     public Long getId() {
@@ -61,6 +49,14 @@ public class Category {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public CategoryDto getCatDto() {
+        CategoryDto categoryDto = new CategoryDto();
+        categoryDto.setCategoryId(id);
+        categoryDto.setCategoryName(name);
+
+        return categoryDto;
     }
 
 }

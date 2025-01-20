@@ -80,7 +80,7 @@ public class AuthServicesImpl implements AuthService {
            response.setRefToken(refToken);
        }catch (Exception e){
            response.setStatus(500);
-           response.setMessage("Error due to " + e.getMessage());
+           response.setMessage(e.getMessage());
        }
 
        return response;

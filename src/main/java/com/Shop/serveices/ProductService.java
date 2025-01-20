@@ -1,20 +1,15 @@
 package com.Shop.serveices;
 
+
 import com.Shop.dto.ProductDto;
-import com.Shop.response.ProductResp;
-import com.Shop.response.Response;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public interface ProductService {
 
-    Response addCategory(String name);
+    ProductDto addProduct(ProductDto productDto);
 
-    Response addProduct(ProductDto productDto, MultipartFile imageFile);
+    List<ProductDto> getAllProducts();
 
-    Response updateProduct(ProductDto productDto, MultipartFile imageFile);
-
-    ProductResp getProducts();
-
-    ProductResp getProductById(Long prdId, Long catId);
 
 }

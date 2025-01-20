@@ -39,6 +39,7 @@ public class ShopApplication implements CommandLineRunner {
 			admin.setGender("Female");
 			admin.setRole(Role.ADMIN);
 			admin.setAddress("Nyegez Mwanza");
+			admin.setImageUrl(null);
 			userRepository.save(admin);
 
 		}

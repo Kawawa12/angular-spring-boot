@@ -2,19 +2,39 @@ package com.Shop.dto;
 
 public class ProductDto {
 
+    private Long id;
     private String name;
-
-    private Long catId;
-
-    private  double price;
+    private Long categoryId;
+    private double price;
+    private byte[] byteImage; // Store image as byte[]
+    private String catName;
 
     public ProductDto() {
         super();
     }
 
-    public ProductDto(String name, Long catId, double price) {
+    public ProductDto(Long id, String name, Long categoryId, double price, byte[] byteImage, String catName) {
+        this.id = id;
         this.name = name;
-        this.catId = catId;
+        this.categoryId = categoryId;
+        this.price = price;
+        this.byteImage = byteImage;
+        this.catName = catName;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -26,21 +46,27 @@ public class ProductDto {
         this.name = name;
     }
 
-    public void setCatId(Long catId) {
-        this.catId = catId;
+    public Long getCategoryId() {
+        return categoryId;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 
-    public Long getCatId() {
-        return catId;
+    public byte[] getByteImage() {
+        return byteImage;
     }
 
-
-    public double getPrice() {
-        return price;
+    public void setByteImage(byte[] byteImage) {
+        this.byteImage = byteImage;
     }
 
+    public String getCatName() {
+        return catName;
+    }
+
+    public void setCatName(String catName) {
+        this.catName = catName;
+    }
 }

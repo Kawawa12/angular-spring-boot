@@ -1,6 +1,13 @@
 package com.Shop.entity;
 
+import com.Shop.dto.ProductDto;
 import jakarta.persistence.*;
+import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import java.util.List;
+
 
 @Entity
 public class Product {
@@ -13,29 +20,25 @@ public class Product {
 
     private double price;
 
-    private String imageUrl;
+    @Lob
+    private byte[] img;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Category category;
 
-    @ManyToOne
-    @JoinColumn(name = "admin_id")
-    private Admin admin;
 
     public Product() {
         super();
     }
 
-
-    public Product(Long id, Admin admin, Category category, String imageUrl,
-                   double price, String name) {
+    public Product(Long id, String name, double price, byte[] img, Category category) {
         this.id = id;
-        this.admin = admin;
-        this.category = category;
-        this.imageUrl = imageUrl;
-        this.price = price;
         this.name = name;
+        this.price = price;
+        this.img = img;
+        this.category = category;
     }
 
     public Long getId() {
@@ -46,12 +49,12 @@ public class Product {
         this.id = id;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getName() {
+        return name;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public double getPrice() {
@@ -62,14 +65,6 @@ public class Product {
         this.price = price;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public Category getCategory() {
         return category;
     }
@@ -78,11 +73,23 @@ public class Product {
         this.category = category;
     }
 
-    public Admin getAdmin() {
-        return admin;
+    public byte[] getImg() {
+        return img;
     }
 
-    public void setAdmin(Admin admin) {
-        this.admin = admin;
+    public void setImg(byte[] img) {
+        this.img = img;
     }
+
+    public ProductDto getProductDto() {
+        ProductDto productDto = new ProductDto();
+        productDto.setId(id);
+        productDto.setName(name);
+        productDto.setPrice(price);
+        productDto.setByteImage(img);
+        productDto.setCategoryId(category.getId()); // Fix: Access category's ID directly
+        productDto.setCatName(productDto.getName());
+        return productDto;
+    }
+
 }
