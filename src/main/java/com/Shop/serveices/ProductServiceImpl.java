@@ -36,6 +36,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = new Product();
         product.setName(productDto.getName());
         product.setPrice(productDto.getPrice());
+        product.setDescription(product.getDescription());
         product.setImg(imageBytes); // Set the byte array image
 
         // Validate categoryId
@@ -55,7 +56,6 @@ public class ProductServiceImpl implements ProductService {
         // Return ProductDto
         return savedProduct.getProductDto();
     }
-
 
 
     @Override

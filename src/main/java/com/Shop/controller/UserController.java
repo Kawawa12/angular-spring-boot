@@ -1,9 +1,12 @@
 package com.Shop.controller;
 
+import com.Shop.dto.CustomerOrderDto;
 import com.Shop.dto.SignIn;
 import com.Shop.dto.SignUp;
 import com.Shop.response.Response;
 import com.Shop.serveices.AuthService;
+import com.Shop.serveices.CustomerOrderService;
+import com.Shop.serveices.CustomerOrderServicesImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +17,12 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final AuthService authService;
+    private final CustomerOrderService customerOrderService;
 
     @Autowired
-    public UserController(AuthService authService) {
+    public UserController(AuthService authService, CustomerOrderService customerOrderService) {
         this.authService = authService;
+        this.customerOrderService = customerOrderService;
     }
 
     @PostMapping("/sign-up")
@@ -28,6 +33,11 @@ public class UserController {
     @PostMapping("/sign-in")
     public ResponseEntity<Response> signIn(@RequestBody SignIn request) {
         return ResponseEntity.ok(authService.signIn(request));
+    }
+
+    @PostMapping("/place-order/{id}")
+    public ResponseEntity<Response> placeOrder(@RequestBody CustomerOrderDto customerOrderDto, @PathVariable Long id){
+        return ResponseEntity.ok(customerOrderService.createOrder(customerOrderDto, id));
     }
 
 }

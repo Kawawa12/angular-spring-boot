@@ -2,11 +2,9 @@ package com.Shop.entity;
 
 import com.Shop.dto.ProductDto;
 import jakarta.persistence.*;
-import lombok.Data;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.util.List;
 
 
 @Entity
@@ -20,24 +18,31 @@ public class Product {
 
     private double price;
 
+    @Column(nullable = true)
+    private String description;
+
     @Lob
     private byte[] img;
+
+    @Column(nullable = true)
+    private Integer stockQuantity;
+
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Category category;
 
-
     public Product() {
-        super();
     }
 
-    public Product(Long id, String name, double price, byte[] img, Category category) {
+    public Product(Long id, String name, double price, String description, byte[] img, Integer stockQuantity, Category category) {
         this.id = id;
         this.name = name;
         this.price = price;
+        this.description = description;
         this.img = img;
+        this.stockQuantity = stockQuantity;
         this.category = category;
     }
 
@@ -65,12 +70,12 @@ public class Product {
         this.price = price;
     }
 
-    public Category getCategory() {
-        return category;
+    public String getDescription() {
+        return description;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public byte[] getImg() {
@@ -81,13 +86,31 @@ public class Product {
         this.img = img;
     }
 
+    public Integer getStockQuantity() {
+        return stockQuantity;
+    }
+
+    public void setStockQuantity(Integer stockQuantity) {
+        this.stockQuantity = stockQuantity;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
     public ProductDto getProductDto() {
         ProductDto productDto = new ProductDto();
         productDto.setId(id);
         productDto.setName(name);
+        productDto.setDesc(description);
         productDto.setPrice(price);
+        productDto.setStock(stockQuantity);
         productDto.setByteImage(img);
-        productDto.setCategoryId(category.getId()); // Fix: Access category's ID directly
+        productDto.setCategoryId(category.getId());
         productDto.setCatName(productDto.getName());
         return productDto;
     }
