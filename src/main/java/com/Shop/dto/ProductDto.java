@@ -15,17 +15,6 @@ public class ProductDto {
         super();
     }
 
-    public ProductDto(Long id, String name, String desc, int stock, Long categoryId, double price, byte[] byteImage, String catName) {
-        this.id = id;
-        this.name = name;
-        this.desc = desc;
-        this.stock = stock;
-        this.categoryId = categoryId;
-        this.price = price;
-        this.byteImage = byteImage;
-        this.catName = catName;
-    }
-
     public Long getId() {
         return id;
     }
@@ -33,6 +22,7 @@ public class ProductDto {
     public int getStock() {
         return stock;
     }
+
 
     public void setStock(int stock) {
         this.stock = stock;

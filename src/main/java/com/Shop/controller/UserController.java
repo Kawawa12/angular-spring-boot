@@ -35,9 +35,9 @@ public class UserController {
         return ResponseEntity.ok(authService.signIn(request));
     }
 
-    @PostMapping("/place-order/{id}")
-    public ResponseEntity<Response> placeOrder(@RequestBody CustomerOrderDto customerOrderDto, @PathVariable Long id){
-        return ResponseEntity.ok(customerOrderService.createOrder(customerOrderDto, id));
+    @PostMapping("/place-order")
+    public ResponseEntity<Response> placeOrder(@RequestBody CustomerOrderDto customerOrderDto, @RequestParam String email){
+        return ResponseEntity.ok(customerOrderService.createOrder(customerOrderDto, email));
     }
 
 }

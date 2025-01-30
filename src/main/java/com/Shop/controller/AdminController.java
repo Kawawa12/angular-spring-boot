@@ -2,8 +2,10 @@ package com.Shop.controller;
 
 import com.Shop.dto.ProductDto;
 import com.Shop.response.CategoryDto;
+import com.Shop.response.CustomerOrderRespDto;
 import com.Shop.response.Response;
 import com.Shop.serveices.CategoryService;
+import com.Shop.serveices.CustomerOrderService;
 import com.Shop.serveices.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +22,12 @@ public class AdminController {
 
     private final CategoryService categoryService;
     private final ProductService productService;
+    private final CustomerOrderService customerOrderService;
 
-    public AdminController(CategoryService categoryService, ProductService productService) {
+    public AdminController(CategoryService categoryService, ProductService productService, CustomerOrderService customerOrderService) {
         this.categoryService = categoryService;
         this.productService = productService;
+        this.customerOrderService = customerOrderService;
     }
 
     @PostMapping("/add-category")
@@ -40,6 +44,8 @@ public class AdminController {
     public ResponseEntity<ProductDto> addProduct(
             @RequestParam("categoryId") Long categoryId,
             @RequestParam("name") String name,
+            @RequestParam("description") String description,
+            @RequestParam("stock") int stock,
             @RequestParam("price") double price,
             @RequestParam("image") MultipartFile image) throws IOException {
 
@@ -55,6 +61,8 @@ public class AdminController {
         productDto.setCategoryId(categoryId);
         productDto.setName(name);
         productDto.setPrice(price);
+        productDto.setStock(stock);
+        productDto.setDesc(description);
         productDto.setByteImage(imageBytes); // Pass byte array image
 
         // Call service to save product
@@ -69,6 +77,11 @@ public class AdminController {
     public ResponseEntity<List<ProductDto>> getAllProducts(){
         List<ProductDto> productDto = productService.getAllProducts();
         return ResponseEntity.ok(productDto);
+    }
+
+    @GetMapping("/orders")
+    public ResponseEntity<List<CustomerOrderRespDto>> getAllOrders() {
+        return ResponseEntity.ok(customerOrderService.getAllCustomerOrders());
     }
 
 }

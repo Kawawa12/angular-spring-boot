@@ -17,8 +17,6 @@ public class OrderItems {
 
     private double totalPrice;
 
-//    @OneToMany(mappedBy = "orderItems")
-//    private List<Product> products;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "customer_order_id", nullable = false)

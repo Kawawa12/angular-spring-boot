@@ -4,12 +4,15 @@ package com.Shop.serveices;
 import com.Shop.dto.ProductDto;
 import com.Shop.entity.Category;
 import com.Shop.entity.Product;
+import com.Shop.entity.Stock;
 import com.Shop.repo.CategoryRepo;
 import com.Shop.repo.ProductRepo;
+import com.Shop.repo.StockRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,11 +21,13 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepo productRepo;
     private final CategoryRepo categoryRepo;
+    private final StockRepository stockRepository;
 
     @Autowired
-    public ProductServiceImpl(ProductRepo productRepo, CategoryRepo categoryRepo) {
+    public ProductServiceImpl(ProductRepo productRepo, CategoryRepo categoryRepo, StockRepository stockRepository) {
         this.productRepo = productRepo;
         this.categoryRepo = categoryRepo;
+        this.stockRepository = stockRepository;
     }
 
 
@@ -36,7 +41,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = new Product();
         product.setName(productDto.getName());
         product.setPrice(productDto.getPrice());
-        product.setDescription(product.getDescription());
+        product.setDescription(productDto.getDesc());
         product.setImg(imageBytes); // Set the byte array image
 
         // Validate categoryId
@@ -52,6 +57,19 @@ public class ProductServiceImpl implements ProductService {
 
         // Save Product and return DTO
         Product savedProduct = productRepo.save(product);
+
+        //Create Stock instance
+        Stock stock = new Stock();
+        stock.setStockQuantity(productDto.getStock());
+        stock.setCreatedAt(LocalDateTime.now());
+        stock.setUpdatedAt(LocalDateTime.now());
+        stock.setProduct(savedProduct);
+        //Save the stock
+        stockRepository.save(stock);
+
+        //Set stock to product and update product table with stock
+        product.setStock(stock);
+        productRepo.save(product);
 
         // Return ProductDto
         return savedProduct.getProductDto();

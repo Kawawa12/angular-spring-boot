@@ -24,27 +24,18 @@ public class Product {
     @Lob
     private byte[] img;
 
-    @Column(nullable = true)
-    private Integer stockQuantity;
-
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Category category;
 
+    @OneToOne(mappedBy = "product")
+    private Stock stock;
+
     public Product() {
     }
 
-    public Product(Long id, String name, double price, String description, byte[] img, Integer stockQuantity, Category category) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.description = description;
-        this.img = img;
-        this.stockQuantity = stockQuantity;
-        this.category = category;
-    }
 
     public Long getId() {
         return id;
@@ -52,6 +43,14 @@ public class Product {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Stock getStock() {
+        return stock;
+    }
+
+    public void setStock(Stock stock) {
+        this.stock = stock;
     }
 
     public String getName() {
@@ -86,13 +85,6 @@ public class Product {
         this.img = img;
     }
 
-    public Integer getStockQuantity() {
-        return stockQuantity;
-    }
-
-    public void setStockQuantity(Integer stockQuantity) {
-        this.stockQuantity = stockQuantity;
-    }
 
     public Category getCategory() {
         return category;
@@ -108,7 +100,7 @@ public class Product {
         productDto.setName(name);
         productDto.setDesc(description);
         productDto.setPrice(price);
-        productDto.setStock(stockQuantity);
+        productDto.setStock(stock.getStockQuantity());
         productDto.setByteImage(img);
         productDto.setCategoryId(category.getId());
         productDto.setCatName(productDto.getName());
