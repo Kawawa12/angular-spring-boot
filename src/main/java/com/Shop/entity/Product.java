@@ -33,9 +33,18 @@ public class Product {
     @OneToOne(mappedBy = "product")
     private Stock stock;
 
+    private boolean isActive;
+
     public Product() {
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
 
     public Long getId() {
         return id;
@@ -53,28 +62,12 @@ public class Product {
         this.stock = stock;
     }
 
-    public String getName() {
-        return name;
+    public Category getCategory() {
+        return category;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public byte[] getImg() {
@@ -85,13 +78,28 @@ public class Product {
         this.img = img;
     }
 
-
-    public Category getCategory() {
-        return category;
+    public double getPrice() {
+        return price;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public ProductDto getProductDto() {
@@ -103,7 +111,7 @@ public class Product {
         productDto.setStock(stock.getStockQuantity());
         productDto.setByteImage(img);
         productDto.setCategoryId(category.getId());
-        productDto.setCatName(productDto.getName());
+        productDto.setCatName(category.getName());
         return productDto;
     }
 

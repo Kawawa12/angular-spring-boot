@@ -33,7 +33,8 @@ public class CustomerOrder {
     public CustomerOrder() {
     }
 
-    public CustomerOrder(Long id, List<OrderItems> orderItems, double totalAmount, LocalDateTime orderedAt, AppUser customer, OrderStatus status, String customerName) {
+    public CustomerOrder(Long id, List<OrderItems> orderItems, double totalAmount,
+                         LocalDateTime orderedAt, AppUser customer, OrderStatus status, String customerName) {
         this.id = id;
         this.orderItems = orderItems;
         this.totalAmount = totalAmount;

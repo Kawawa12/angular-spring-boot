@@ -3,6 +3,7 @@ package com.Shop.entity;
 public enum OrderStatus {
     PENDING,
     CONFIRMED,
+    COMPLETED,
     CANCELED;
 
     @Override

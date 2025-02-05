@@ -36,8 +36,8 @@ public class UserController {
     }
 
     @PostMapping("/place-order")
-    public ResponseEntity<Response> placeOrder(@RequestBody CustomerOrderDto customerOrderDto, @RequestParam String email){
-        return ResponseEntity.ok(customerOrderService.createOrder(customerOrderDto, email));
+    public ResponseEntity<Response> placeOrder(@RequestBody CustomerOrderDto customerOrderDto, @RequestParam Long id){
+        return ResponseEntity.ok(customerOrderService.createOrder(customerOrderDto, id));
     }
 
 }
