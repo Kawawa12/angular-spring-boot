@@ -24,6 +24,8 @@ public class AppUser implements UserDetails {
 
     private String phone;
 
+    private boolean isActive;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -32,17 +34,22 @@ public class AppUser implements UserDetails {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    private List<CustomerOrder> orders;
+
     public AppUser() {
         super();
     }
 
-    public AppUser(Long id, String fullName, String email, String password, String phone, Role role) {
+    public AppUser(Long id, List<CustomerOrder> orders, Role role, boolean isActive, String phone, String password, String email, String fullName) {
         this.id = id;
-        this.fullName = fullName;
-        this.email = email;
-        this.password = password;
-        this.phone = phone;
+        this.orders = orders;
         this.role = role;
+        this.isActive = isActive;
+        this.phone = phone;
+        this.password = password;
+        this.email = email;
+        this.fullName = fullName;
     }
 
     @Override
@@ -52,6 +59,22 @@ public class AppUser implements UserDetails {
 
     public String getEmail() {
         return email;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public List<CustomerOrder> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<CustomerOrder> orders) {
+        this.orders = orders;
     }
 
     public void setEmail(String email) {

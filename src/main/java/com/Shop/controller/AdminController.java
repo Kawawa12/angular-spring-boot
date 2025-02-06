@@ -1,16 +1,11 @@
 package com.Shop.controller;
 
+import com.Shop.dto.AdminImageDto;
 import com.Shop.dto.ConfirmOrderDto;
 import com.Shop.dto.ProductDto;
 import com.Shop.dto.StockData;
-import com.Shop.response.CategoryDto;
-import com.Shop.response.CustomerOrderRespDto;
-import com.Shop.response.Response;
-import com.Shop.response.StockResponseDto;
-import com.Shop.serveices.CategoryService;
-import com.Shop.serveices.CustomerOrderService;
-import com.Shop.serveices.ProductService;
-import com.Shop.serveices.StockService;
+import com.Shop.response.*;
+import com.Shop.serveices.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,13 +23,15 @@ public class AdminController {
     private final ProductService productService;
     private final CustomerOrderService customerOrderService;
     private final StockService stockService;
+    private final ManagerService managerService;
 
     public AdminController(CategoryService categoryService, ProductService productService,
-                           CustomerOrderService customerOrderService, StockService stockService) {
+                           CustomerOrderService customerOrderService, StockService stockService, ManagerService managerService) {
         this.categoryService = categoryService;
         this.productService = productService;
         this.customerOrderService = customerOrderService;
         this.stockService = stockService;
+        this.managerService = managerService;
     }
 
     @PostMapping("/add-category")
@@ -78,6 +75,10 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
     }
 
+    @GetMapping("/admin/{adminId}")
+    public ResponseEntity<AdminRespDto> getAdmin(@PathVariable Long adminId) {
+        return ResponseEntity.ok(managerService.getAdmin(adminId));
+    }
 
 
     @GetMapping("/products")
@@ -159,6 +160,17 @@ public class AdminController {
     @GetMapping("/active-products")
     public ResponseEntity<List<ProductDto>> getAllActiveProduct(){
         return ResponseEntity.ok(productService.getAllActiveProducts());
+    }
+
+    @GetMapping("/admin-img/{id}")
+    public ResponseEntity<String> getAdminImg(@PathVariable Long id) {
+        return ResponseEntity.ok(managerService.getAdminImage(id));
+    }
+
+    @PutMapping("/update-admin-img/{id}")
+    public ResponseEntity<String> updateAdminImg(@PathVariable Long id,
+                                                 @RequestParam("image")MultipartFile imgFile)throws IOException{
+        return ResponseEntity.ok(managerService.updateAdminImg(id,imgFile));
     }
 
 }

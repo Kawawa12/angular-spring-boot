@@ -19,8 +19,8 @@ public class CustomerOrder {
     private OrderStatus status;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id")
-    private AppUser customer;
+    @JoinColumn(name = "user_id") // Make sure this matches the column in DB
+    private AppUser user;
 
     private LocalDateTime orderedAt;
 
@@ -34,12 +34,12 @@ public class CustomerOrder {
     }
 
     public CustomerOrder(Long id, List<OrderItems> orderItems, double totalAmount,
-                         LocalDateTime orderedAt, AppUser customer, OrderStatus status, String customerName) {
+                         LocalDateTime orderedAt, AppUser user, OrderStatus status, String customerName) {
         this.id = id;
         this.orderItems = orderItems;
         this.totalAmount = totalAmount;
         this.orderedAt = orderedAt;
-        this.customer = customer;
+        this.user = user;
         this.status = status;
         this.customerName = customerName;
     }
@@ -77,11 +77,11 @@ public class CustomerOrder {
     }
 
     public AppUser getCustomer() {
-        return customer;
+        return user;
     }
 
-    public void setCustomer(AppUser customer) {
-        this.customer = customer;
+    public void setCustomer(AppUser user) {
+        this.user = user;
     }
 
     public OrderStatus getStatus() {

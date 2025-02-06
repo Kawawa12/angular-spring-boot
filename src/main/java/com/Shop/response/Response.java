@@ -20,6 +20,8 @@ public class Response {
 
     private String refToken;
 
+    private byte[] imgData;
+
     public Response() {
         super();
     }
@@ -39,6 +41,14 @@ public class Response {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public void setImgData(byte[] imgData) {
+        this.imgData = imgData;
+    }
+
+    public byte[] getImgData() {
+        return imgData;
     }
 
     public String getRole() {

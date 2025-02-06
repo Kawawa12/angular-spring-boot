@@ -40,6 +40,7 @@ public class AuthServicesImpl implements AuthService {
             user.setFullName(signUpReq.getFullName());
             user.setEmail(signUpReq.getEmail());
             user.setRole(Role.USER);
+            user.setActive(true);
             user.setPassword(passwordEncoder.encode(signUpReq.getPassword()));
             user.setPhone(signUpReq.getPhone());
             AppUser savedUser = userRepository.save(user);
