@@ -1,5 +1,6 @@
 package com.Shop.entity;
 
+import com.Shop.dto.AdminDto;
 import com.Shop.dto.AdminImageDto;
 import jakarta.persistence.*;
 
@@ -17,6 +18,9 @@ public class AdminImage {
     @OneToOne(mappedBy = "adminImage", fetch = FetchType.EAGER)
     private Admin admin;
 
+    @OneToOne(mappedBy = "profImage", fetch = FetchType.EAGER)
+    private Manager manager;
+
     public AdminImage() {
     }
 
@@ -30,6 +34,14 @@ public class AdminImage {
 
     public Admin getAdmin() {
         return admin;
+    }
+
+    public Manager getManager() {
+        return manager;
+    }
+
+    public void setManager(Manager manager) {
+        this.manager = manager;
     }
 
     public void setAdmin(Admin admin) {
@@ -46,8 +58,18 @@ public class AdminImage {
 
     public AdminImageDto getImageDto(){
         AdminImageDto adminImageDto = new AdminImageDto();
+        adminImageDto.setId(admin.getId());
         adminImageDto.setByteImage(img);
+        adminImageDto.setFullName(admin.getFullName());
+        adminImageDto.setEmail(admin.getEmail());
+        adminImageDto.setGender(admin.getGender());
+        adminImageDto.setPhone(admin.getPhone());
+        adminImageDto.setyOfBirth(admin.getyOfBirth());
+        adminImageDto.setAddress(admin.getAddress());
+        adminImageDto.setStatus(admin.isActive());
         return adminImageDto;
     }
+
+
 }
 

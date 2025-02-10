@@ -1,9 +1,12 @@
 package com.Shop.controller;
 
 import com.Shop.dto.AdminDto;
+import com.Shop.dto.AdminImageDto;
+import com.Shop.dto.ManagerProfileDto;
 import com.Shop.response.AdminRespDto;
 import com.Shop.response.Response;
 import com.Shop.serveices.ManagerService;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +22,37 @@ public class ManagerController {
 
     public ManagerController(ManagerService managerService) {
         this.managerService = managerService;
+    }
+
+    @GetMapping("/admins-images")
+    public ResponseEntity<List<AdminImageDto>> fetchAllAdmins() {
+        return ResponseEntity.ok(managerService.getAdminsImageList());
+    }
+
+    @PutMapping("/activate-or-deactivate-admin/{id}")
+    public ResponseEntity<String> changeAdminStatus(@PathVariable Long id){
+        return ResponseEntity.ok(managerService.toggleAdminStatus(id));
+    }
+
+    @PutMapping("/update-prof-img/{id}")
+    public ResponseEntity<String> updateManagerProfileImg(@PathVariable Long id,
+                                                 @RequestParam("image")MultipartFile imgFile)throws IOException{
+        return ResponseEntity.ok(managerService.updateProfManagerImg(id,imgFile));
+    }
+
+    @GetMapping("/manager-img/{id}")
+    public ResponseEntity<String> getManagerProfImg(@PathVariable Long id) {
+        return ResponseEntity.ok(managerService.getManagerImage(id));
+    }
+
+    @GetMapping("/manager-prof/{id}")
+    public ResponseEntity<ManagerProfileDto> getProfile(@PathVariable Long id) {
+        return ResponseEntity.ok(managerService.getProfile(id));
+    }
+
+    @PutMapping("update-manager-prof/{id}")
+    public ResponseEntity<String> updateManagerProf(@PathVariable Long id, @RequestBody ManagerProfileDto request) {
+        return ResponseEntity.ok(managerService.updateManagerProf(id,request));
     }
 
     @PostMapping("/add-admin")

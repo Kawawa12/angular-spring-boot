@@ -61,30 +61,39 @@ public class AuthServicesImpl implements AuthService {
 
     @Override
     public Response signIn(SignIn request) {
-
         Response response = new Response();
 
-       try{
-           authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-           AppUser user = userRepository.findByEmail(request.getEmail()).orElseThrow(
-                   () -> new UsernameNotFoundException("User is not found.")
-           );
+        try {
+            AppUser user = userRepository.findByEmail(request.getEmail())
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found."));
 
-           String token = jwtService.generateToken(user);
-           String refToken = jwtService.generateRefreshToken(new HashMap<>(), user);
+            // Check if user is active
+            if (!user.isActive()) {
+                response.setStatus(403); // Forbidden
+                response.setMessage("Your account is inactive. Please contact the administrator.");
+                return response;
+            }
 
-           response.setStatus(200);
-           response.setMessage("Successful.");
-           response.setId(user.getId());
-           response.setRole(user.getRole().name());
-           response.setJwtToken(token);
-           response.setRefToken(refToken);
-       }catch (Exception e){
-           response.setStatus(500);
-           response.setMessage(e.getMessage());
-       }
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+            );
 
-       return response;
+            String token = jwtService.generateToken(user);
+            String refToken = jwtService.generateRefreshToken(new HashMap<>(), user);
+
+            response.setStatus(200);
+            response.setMessage("Successful.");
+            response.setId(user.getId());
+            response.setRole(user.getRole().name());
+            response.setJwtToken(token);
+            response.setRefToken(refToken);
+
+        } catch (Exception e) {
+            response.setStatus(500);
+            response.setMessage(e.getMessage());
+        }
+
+        return response;
     }
 
 

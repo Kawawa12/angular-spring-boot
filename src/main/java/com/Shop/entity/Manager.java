@@ -1,5 +1,6 @@
 package com.Shop.entity;
 
+import com.Shop.dto.ManagerProfileDto;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -11,10 +12,9 @@ public class Manager extends AppUser{
 
     private String address;
 
-
-    @Lob
-    private byte[] img;
-
+    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @JoinColumn(name = "image_id")
+    private AdminImage profImage; // Relationship to ProfileImage entity
 
     @OneToMany(mappedBy = "manager",fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE} )
     private List<Admin> admin;
@@ -23,13 +23,14 @@ public class Manager extends AppUser{
         super();
     }
 
-
-    public Manager(Long id, List<CustomerOrder> orders, Role role, boolean isActive, String phone, String password, String email, String fullName, List<Admin> admin, byte[] img, String address, String gender) {
+    public Manager(Long id, List<CustomerOrder> orders, Role role, boolean isActive, String phone,
+                   String password, String email, String fullName, String gender, List<Admin> admin,
+                   AdminImage profImage, String address) {
         super(id, orders, role, isActive, phone, password, email, fullName);
-        this.admin = admin;
-        this.img = img;
-        this.address = address;
         this.gender = gender;
+        this.admin = admin;
+        this.profImage = profImage;
+        this.address = address;
     }
 
     public String getGender() {
@@ -40,12 +41,12 @@ public class Manager extends AppUser{
         this.gender = gender;
     }
 
-    public byte[] getImg() {
-        return img;
+    public AdminImage getProfImage() {
+        return profImage;
     }
 
-    public void setImg(byte[] img) {
-        this.img = img;
+    public void setProfImage(AdminImage profImage) {
+        this.profImage = profImage;
     }
 
     public List<Admin> getAdmin() {
@@ -62,5 +63,17 @@ public class Manager extends AppUser{
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public ManagerProfileDto getProfileDto() {
+        ManagerProfileDto profileDto = new ManagerProfileDto();
+
+        profileDto.setFullName(getFullName());
+        profileDto.setEmail(getEmail());
+        profileDto.setPhone(getPhone());
+        profileDto.setGender(getGender());
+        profileDto.setAddress(getAddress());
+
+        return profileDto;
     }
 }

@@ -1,9 +1,8 @@
 package com.Shop.controller;
 
-import com.Shop.dto.AdminImageDto;
-import com.Shop.dto.ConfirmOrderDto;
-import com.Shop.dto.ProductDto;
-import com.Shop.dto.StockData;
+import com.Shop.dto.*;
+import com.Shop.entity.SalesRecord;
+import com.Shop.repo.SalesRepository;
 import com.Shop.response.*;
 import com.Shop.serveices.*;
 import org.springframework.http.HttpStatus;
@@ -12,7 +11,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin("http//:localhost:4200")
@@ -24,14 +27,19 @@ public class AdminController {
     private final CustomerOrderService customerOrderService;
     private final StockService stockService;
     private final ManagerService managerService;
+    private final SalesServices salesServices;
+    private final SalesRepository salesRepository;
 
     public AdminController(CategoryService categoryService, ProductService productService,
-                           CustomerOrderService customerOrderService, StockService stockService, ManagerService managerService) {
+                           CustomerOrderService customerOrderService, StockService stockService,
+                           ManagerService managerService, SalesServices salesServices, SalesRepository salesRepository) {
         this.categoryService = categoryService;
         this.productService = productService;
         this.customerOrderService = customerOrderService;
         this.stockService = stockService;
         this.managerService = managerService;
+        this.salesServices = salesServices;
+        this.salesRepository = salesRepository;
     }
 
     @PostMapping("/add-category")
@@ -172,5 +180,73 @@ public class AdminController {
                                                  @RequestParam("image")MultipartFile imgFile)throws IOException{
         return ResponseEntity.ok(managerService.updateAdminImg(id,imgFile));
     }
+
+    @PostMapping("/add-sales")
+    public ResponseEntity<String> addSale(@RequestBody SalesDto salesDto){
+        String productName = salesDto.getProductName();
+        String description = salesDto.getDescription();;
+        int quantity = salesDto.getQuantity();
+        double price = salesDto.getPrice();
+
+        return ResponseEntity.ok(salesServices.addSales(productName,quantity,price,description));
+    }
+
+    @GetMapping("/date/{date}")
+    public ResponseEntity<ApiResponse<SalesRecord>> getSalesForSpecificDate(@PathVariable String date) {
+        try {
+            LocalDate specificDate = LocalDate.parse(date);
+            Optional<SalesRecord> sales = salesRepository.findBySaleDate(specificDate);
+
+            if (sales.isPresent()) {
+                // Return the sales record with a success message
+                ApiResponse<SalesRecord> response = new ApiResponse<>("Sales record found.", sales.get());
+                return ResponseEntity.ok(response);
+            } else {
+                // Return a "No Records Found" message
+                ApiResponse<SalesRecord> response = new ApiResponse<>("No records found for the given date.", null);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+        } catch (DateTimeParseException e) {
+            // Return an error message for invalid date format
+            ApiResponse<SalesRecord> response = new ApiResponse<>("Invalid date format! Use yyyy-MM-dd.", null);
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+
+    //Retrieve Daily Sales
+    @GetMapping("/daily")
+    public ResponseEntity<SalesRecord> getDailySales(){
+        return ResponseEntity.ok(salesServices.getDailySales());
+    }
+
+    //Retrieve Weekly Sales
+    @GetMapping("/last-week")
+    public ResponseEntity<ApiResponse<List<SalesRecord>>> getLastWeekSales() {
+        LocalDate end = LocalDate.now();
+        LocalDate start = end.minusWeeks(1);
+        List<SalesRecord> sales = salesRepository.findSalesInRange(start, end);
+
+        if (!sales.isEmpty()) {
+            ApiResponse<List<SalesRecord>> response = new ApiResponse<>("Last week's sales found.", sales);
+            return ResponseEntity.ok(response);
+        } else {
+            ApiResponse<List<SalesRecord>> response = new ApiResponse<>("No records found for the last week.", null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+    }
+
+    //Retrieve Monthly Sales
+    @GetMapping("/monthly")
+    public ResponseEntity<List<SalesRecord>> getMonthlySales(){
+        return ResponseEntity.ok(salesServices.getMonthlySales());
+    }
+
+    //Retrieve Weekly Sales
+    @GetMapping("/yearly")
+    public ResponseEntity<List<SalesRecord>> getYearlySales(){
+        return ResponseEntity.ok(salesServices.getYearlySales());
+    }
+
 
 }

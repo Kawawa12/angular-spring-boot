@@ -36,10 +36,11 @@ public class ShopApplication implements CommandLineRunner {
 			manager.setPassword(passwordEncoder.encode("manager123"));
 			manager.setPhone("0766-234-078");
 			manager.setGender("Male");
+			manager.setProfImage(null);
 			manager.setActive(true);
 			manager.setRole(Role.MANAGER);
 			manager.setAddress("Nyegez Mwanza");
-			manager.setImg(null); // Set img to null
+
 			userRepository.save(manager);
 			System.out.println("Manager created successfully!");
 		} else {
