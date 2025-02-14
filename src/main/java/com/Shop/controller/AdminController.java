@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Optional;
 
@@ -81,6 +82,11 @@ public class AdminController {
         ProductDto savedProduct = productService.addProduct(productDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
+    }
+
+    @PutMapping("update-admin-prof/{id}")
+    public ResponseEntity<String> updateAdminProf(@PathVariable Long id, @RequestBody ManagerProfileDto request) {
+        return ResponseEntity.ok(managerService.updateAdminProf(id,request));
     }
 
     @GetMapping("/admin/{adminId}")
@@ -220,12 +226,20 @@ public class AdminController {
         return ResponseEntity.ok(salesServices.getDailySales());
     }
 
-    //Retrieve Weekly Sales
     @GetMapping("/last-week")
     public ResponseEntity<ApiResponse<List<SalesRecord>>> getLastWeekSales() {
-        LocalDate end = LocalDate.now();
-        LocalDate start = end.minusWeeks(1);
+        // Calculate the end date as the last day of the previous week (Sunday)
+        LocalDate end = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        // Calculate the start date as the first day of the last week (Monday)
+        LocalDate start = end.minusWeeks(1).plusDays(1);
+
+        // Log the date range for debugging
+        System.out.println("Fetching sales from: " + start + " to " + end);
+
         List<SalesRecord> sales = salesRepository.findSalesInRange(start, end);
+
+        // Log the fetched sales for debugging
+        System.out.println("Fetched Sales: " + sales);
 
         if (!sales.isEmpty()) {
             ApiResponse<List<SalesRecord>> response = new ApiResponse<>("Last week's sales found.", sales);

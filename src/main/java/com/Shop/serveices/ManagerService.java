@@ -17,6 +17,8 @@ public interface ManagerService {
 
     Response updateAdmin(Long id, Long adminId, AdminDto adminDto, MultipartFile imgFile) throws IOException;
 
+    String updateAdminProf(Long managerId, ManagerProfileDto request);
+
     List<AdminRespDto> allAdmins(Long managerId);
 
     AdminRespDto getAdmin(Long adminId);
@@ -37,6 +39,24 @@ public interface ManagerService {
 
     String toggleAdminStatus(Long id);
 
+    int customerCount();
 
+    int activeAdminCount();
+
+    int totalActiveProductCount();
+
+    int totalCategory();
+
+    int totalNewOrders();
+
+    int totalCompletedOrders();
+
+    int totalCanceledOrders();
+
+    int totalConfirmedOrders();
+
+    String lockAccount(Long id);
+
+    String unlockAccount(Long id);
 
 }

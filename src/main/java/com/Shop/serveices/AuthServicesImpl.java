@@ -67,10 +67,17 @@ public class AuthServicesImpl implements AuthService {
             AppUser user = userRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new UsernameNotFoundException("User not found."));
 
+            // Check if user is locked
+            if (user.isAccountLocked()) {
+                response.setStatus(403); // Forbidden
+                response.setMessage("Your account has been locked. You cannot login.");
+                return response;
+            }
+
             // Check if user is active
             if (!user.isActive()) {
-                response.setStatus(403); // Forbidden
-                response.setMessage("Your account is inactive. Please contact the administrator.");
+                response.setStatus(403);
+                response.setMessage("Your account is inactive. Please contact the administrator to activate your account.");
                 return response;
             }
 
@@ -95,6 +102,8 @@ public class AuthServicesImpl implements AuthService {
 
         return response;
     }
+
+
 
 
 }

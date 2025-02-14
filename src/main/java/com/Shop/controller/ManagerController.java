@@ -111,4 +111,54 @@ public class ManagerController {
     public ResponseEntity<List<AdminRespDto>> getAllAdmins(@PathVariable Long managerId){
         return ResponseEntity.ok(managerService.allAdmins(managerId));
     }
+
+    @GetMapping("/active-admins")
+    public ResponseEntity<?> getTotalActiveAdminCount(){
+        return ResponseEntity.ok(managerService.activeAdminCount());
+    }
+
+    @GetMapping("/total-stock-products")
+    public ResponseEntity<?> getStockForActiveProduct(){
+        return ResponseEntity.ok(managerService.totalActiveProductCount());
+    }
+
+    @GetMapping("/total-customers")
+    public ResponseEntity<?> getTotalCustomer(){
+        return ResponseEntity.ok(managerService.customerCount());
+    }
+
+    @GetMapping("/total-categories")
+    public ResponseEntity<?> getTotalCategory(){
+        return ResponseEntity.ok(managerService.totalCategory());
+    }
+
+    @GetMapping("/total-new-orders")
+    public ResponseEntity<?> getNeOrders(){
+        return ResponseEntity.ok(managerService.totalNewOrders());
+    }
+
+    @GetMapping("/total-canceled-orders")
+    public ResponseEntity<?> getCanceledOrders(){
+        return ResponseEntity.ok(managerService.totalCanceledOrders());
+    }
+
+    @GetMapping("/total-confirmed-orders")
+    public ResponseEntity<?> getConfirmedOrders(){
+        return ResponseEntity.ok(managerService.totalConfirmedOrders());
+    }
+
+    @GetMapping("/total-completed-orders")
+    public ResponseEntity<?> getCompletedOrders(){
+        return ResponseEntity.ok(managerService.totalCompletedOrders());
+    }
+
+    @PostMapping("/lock-account/{id}")
+    public ResponseEntity<?> lockUserAccount(@PathVariable Long id) {
+        return ResponseEntity.ok(managerService.lockAccount(id));
+    }
+
+    @PostMapping("/unlock-account/{id}")
+    public ResponseEntity<?> unLockUserAccount(@PathVariable Long id) {
+        return ResponseEntity.ok(managerService.unlockAccount(id));
+    }
 }

@@ -10,6 +10,7 @@ public class ManagerProfileDto {
     private String phone;
     private String address;
     private String gender;
+    private String yOfBirth;
 
     public ManagerProfileDto() {
     }
@@ -24,6 +25,14 @@ public class ManagerProfileDto {
 
     public String getGender() {
         return gender;
+    }
+
+    public String getyOfBirth() {
+        return yOfBirth;
+    }
+
+    public void setyOfBirth(String yOfBirth) {
+        this.yOfBirth = yOfBirth;
     }
 
     public void setGender(String gender) {

@@ -12,8 +12,8 @@ import java.util.Optional;
 
 public interface SalesRepository extends JpaRepository<SalesRecord, Long> {
 
-    @Query("SELECT s FROM SalesRecord s WHERE s.saleDate BETWEEN :startDate AND :endDate")
-    List<SalesRecord> findSalesInRange(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+    @Query("SELECT s FROM SalesRecord s WHERE s.saleDate BETWEEN :start AND :end")
+    List<SalesRecord> findSalesInRange(@Param("start") LocalDate start, @Param("end") LocalDate end);
 
     @Query("SELECT s FROM SalesRecord s WHERE DATE(s.saleDate) = :date")
     Optional<SalesRecord> findBySaleDate(@Param("date") LocalDate date);

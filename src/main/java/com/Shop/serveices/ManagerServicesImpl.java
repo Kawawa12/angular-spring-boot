@@ -4,10 +4,7 @@ import com.Shop.dto.AdminDto;
 import com.Shop.dto.AdminImageDto;
 import com.Shop.dto.ManagerProfileDto;
 import com.Shop.entity.*;
-import com.Shop.repo.AdminImageRepository;
-import com.Shop.repo.AdminRepository;
-import com.Shop.repo.ManagerRepository;
-import com.Shop.repo.UserRepository;
+import com.Shop.repo.*;
 import com.Shop.response.AdminRespDto;
 import com.Shop.response.Response;
 import jakarta.transaction.Transactional;
@@ -32,16 +29,22 @@ public class ManagerServicesImpl implements ManagerService {
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
     private final AdminImageRepository adminImageRepository;
+    private final StockRepository stockRepository;
+    private final CategoryRepo categoryRepo;
+    private final CustomerOrderRepo customerOrderRepo;
 
     @Autowired
     public ManagerServicesImpl (ManagerRepository managerRepository, UserRepository userRepository,
                                 AdminRepository adminRepository, PasswordEncoder passwordEncoder,
-                                AdminImageRepository adminImageRepository) {
+                                AdminImageRepository adminImageRepository, StockRepository stockRepository, CategoryRepo categoryRepo, CustomerOrderRepo customerOrderRepo) {
         this.managerRepository = managerRepository;
         this.userRepository = userRepository;
         this.adminRepository = adminRepository;
         this.passwordEncoder = passwordEncoder;
         this.adminImageRepository = adminImageRepository;
+        this.stockRepository = stockRepository;
+        this.categoryRepo = categoryRepo;
+        this.customerOrderRepo = customerOrderRepo;
     }
 
     public Response addAdmin(Long id, AdminDto adminDto, MultipartFile imgFile) throws IOException {
@@ -163,38 +166,6 @@ public class ManagerServicesImpl implements ManagerService {
     }
 
 
-//    //METHOD TO UPDATE ADMIN
-//    public Response updateAdminImage(Long adminId, MultipartFile imgFile) throws IOException {
-//        Response response = new Response();
-//
-//        // Step 1: Find the Admin by ID
-//        Optional<Admin> optionalAdmin = adminRepository.findById(adminId);
-//        if (optionalAdmin.isEmpty()) {
-//            response.setStatus(404);
-//            response.setMessage("Admin is not found");
-//            return response;
-//        }
-//
-//        Admin admin = optionalAdmin.get();
-//
-//        // Step 2: Check if the Admin has an existing AdminImage
-//        AdminImage adminImage = admin.getAdminImage();
-//        if (adminImage == null) {
-//            // If there's no image, create a new one
-//            adminImage = new AdminImage();
-//            adminImage.setAdmin(admin);  // Associate the image with the admin
-//        }
-//        // Step 3: Set the new image data
-//        adminImage.setImg(imgFile.getBytes());
-//
-//        // Step 4: Save the AdminImage
-//        adminImageRepository.save(adminImage);
-//
-//        // Step 5: Respond with success
-//        response.setStatus(200);
-//        response.setMessage("Image updated successfully.");
-//        return response;
-//    }
 
 
     @Transactional
@@ -306,6 +277,24 @@ public class ManagerServicesImpl implements ManagerService {
         return "Profile updated successful.";
     }
 
+    public String updateAdminProf(Long adminId, ManagerProfileDto request){
+        //Find if manager exist
+        Optional<Admin> optionalAdmin = adminRepository.findById(adminId);
+        if (optionalAdmin.isPresent()) {
+            Admin exitingAdmin = optionalAdmin.get();
+            exitingAdmin.setFullName(request.getFullName());
+            exitingAdmin.setEmail(request.getEmail());
+            exitingAdmin.setPhone(request.getPhone());
+            exitingAdmin.setGender(request.getGender());
+            exitingAdmin.setAddress(request.getAddress());
+            exitingAdmin.setyOfBirth(request.getyOfBirth());
+            adminRepository.save(exitingAdmin);
+        }else {
+            return "Failed to update profile.";
+        }
+        return "Profile updated successful.";
+    }
+
     public List<AdminImageDto> getAdminsImageList() {
         List<AdminImage> adminImages = adminImageRepository.findAll();
 
@@ -329,6 +318,67 @@ public class ManagerServicesImpl implements ManagerService {
         return newStatus ? "Admin activated successfully." : "Admin deactivated successfully.";
     }
 
+    public String lockAccount(Long id) {
+        Optional<AppUser> optionalAppUser = userRepository.findById(id);
+        if (optionalAppUser.isPresent()) {
+            AppUser user = optionalAppUser.get();
+            user.lockUserAccount(); // Lock the account
+            userRepository.save(user); // Save to database
+            return "Account has been locked successfully.";
+        }
+        return "Failed to lock account. Please retry.";
+    }
 
+    public String unlockAccount(Long id) {
+        Optional<AppUser> optionalAppUser = userRepository.findById(id);
+        if (optionalAppUser.isPresent()) {
+            AppUser user = optionalAppUser.get();
+            user.unLockUserAccount(); // Unlock the account
+            userRepository.save(user); // Save to database
+            return "Account has been unlocked successfully.";
+        }
+        return "Failed to unlock account. Please retry.";
+    }
+
+
+    public int customerCount(){
+        return (int) userRepository.findAll().stream()
+                .filter(appUser -> appUser.getRole().equals(Role.USER)).count();
+    }
+
+    public int activeAdminCount(){
+        return (int)adminRepository.findAll().stream().filter(AppUser::isActive).count();
+    }
+
+    public int totalActiveProductCount(){
+        return stockRepository.findAll().stream().filter(stock -> stock.getProduct().isActive())
+                .mapToInt(Stock::getStockQuantity).sum();
+    }
+
+    public int totalCategory(){
+        return categoryRepo.findAll().size();
+    }
+
+    public int totalNewOrders(){
+        return customerOrderRepo.countPendingOrders();
+    }
+
+    public int totalCompletedOrders(){
+        return (int)customerOrderRepo.findAll().stream().
+                filter(customerOrder -> customerOrder.getStatus().
+                        equals(OrderStatus.COMPLETED)).count();
+    }
+
+    public int totalCanceledOrders(){
+        return (int)customerOrderRepo.findAll().stream().
+                filter(customerOrder -> customerOrder.getStatus().
+                        equals(OrderStatus.CANCELED)).count();
+    }
+
+    public int totalConfirmedOrders(){
+        return (int)customerOrderRepo.findAll().stream().
+                filter(customerOrder -> customerOrder.getStatus().
+                        equals(OrderStatus.CONFIRMED)).count();
+    }
 
 }

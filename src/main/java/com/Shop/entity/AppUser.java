@@ -26,6 +26,8 @@ public class AppUser implements UserDetails {
 
     private boolean isActive;
 
+    private boolean isAccountLocked = false;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -85,15 +87,6 @@ public class AppUser implements UserDetails {
         this.password = password;
     }
 
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -114,6 +107,13 @@ public class AppUser implements UserDetails {
         this.phone = phone;
     }
 
+    public boolean isAccountLocked() {
+        return isAccountLocked;
+    }
+
+    public void setAccountLocked(boolean accountLocked) {
+        isAccountLocked = accountLocked;
+    }
 
     public String getFullName() {
         return fullName;
@@ -123,24 +123,43 @@ public class AppUser implements UserDetails {
         this.fullName = fullName;
     }
 
+
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
     @Override
     public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return true;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void lockUserAccount() {
+        this.isAccountLocked = true; // Lock the account
+    }
+
+    public void unLockUserAccount() {
+        this.isAccountLocked = false; // Lock the account
     }
 
 
